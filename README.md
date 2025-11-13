@@ -12,3 +12,9 @@ Utilize as seguintes credenciais para fazer login no app
   email: candidato@onematter.com
   senha: senhaSegura123
 ```
+
+--- API Java
+
+Para acessar as funcionalidades do aplicativo siga as instruções para rodar a API Java
+
+Repositório: [https://github.com/onematterfiap](https://github.com/onematterfiap/gs-onematter-java)
