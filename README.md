@@ -1,6 +1,6 @@
-# One Matter 
+# One Matter
 
-Projeto dedicado à Global Solution FIAP 2TDS - 2° Semestre 2025 
+Projeto dedicado à Global Solution FIAP 2TDS - 2° Semestre 2025
 
 ---
 
