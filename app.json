@@ -1,0 +1,38 @@
+{
+    "expo": {
+        "name": "one-matter",
+        "slug": "onem",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./assets/images/onem-logo.png",
+        "scheme": "onem",
+        "userInterfaceStyle": "automatic",
+        "newArchEnabled": true,
+        "splash": {
+            "image": "./assets/images/onem-logo.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#ffffff"
+        },
+        "ios": {
+            "supportsTablet": true
+        },
+        "android": {
+            "softwareKeyboardLayoutMode": "pan",
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/images/onem-logo.png",
+                "backgroundColor": "#ffffff"
+            },
+            "edgeToEdgeEnabled": true,
+            "predictiveBackGestureEnabled": false
+        },
+        "web": {
+            "bundler": "metro",
+            "output": "static",
+            "favicon": "./assets/images/onem-logo.png"
+        },
+        "plugins": ["expo-router", "expo-web-browser"],
+        "experiments": {
+            "typedRoutes": true
+        }
+    }
+}
