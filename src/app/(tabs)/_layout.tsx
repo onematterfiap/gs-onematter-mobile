@@ -2,7 +2,7 @@ import Header from "@/components/ui/Header";
 import { Tabs, useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 
-// Definição do tipo FeatherIconName (necessário para tipagem)
+// Definição do tipo FeatherIconName
 type FeatherIconName = React.ComponentProps<typeof Feather>["name"];
 
 // Função que renderiza o componente header customizado
@@ -35,38 +35,14 @@ export default function TabsLayout() {
             }}
         >
             <Tabs.Screen
-                name="explore"
+                name="help"
                 options={
                     {
-                        title: "Buscar Vagas",
-                        tabBarIcon: ({ color }: { color: string }) => <Feather name="briefcase" color={color} size={24} />,
+                        title: "Suporte",
+                        tabBarIcon: ({ color }: { color: string }) => <Feather name="help-circle" color={color} size={24} />,
                         headerShown: true,
                         header: CustomHeaderRenderer,
-                        pageIconName: "briefcase",
-                    } as any // Esse any é pra parar de apitar alerta no pageIconName, depois tenho que resolver
-                }
-            />
-            <Tabs.Screen
-                name="tests"
-                options={
-                    {
-                        title: "Meus Testes",
-                        tabBarIcon: ({ color }: { color: string }) => <Feather name="archive" color={color} size={24} />,
-                        headerShown: true,
-                        header: CustomHeaderRenderer,
-                        pageIconName: "archive",
-                    } as any
-                }
-            />
-            <Tabs.Screen
-                name="home"
-                options={
-                    {
-                        title: "One Matter",
-                        tabBarIcon: ({ color }: { color: string }) => <Feather name="home" color={color} size={24} />,
-                        headerShown: true,
-                        header: CustomHeaderRenderer,
-                        pageIconName: "home",
+                        pageIconName: "help-circle",
                     } as any
                 }
             />
@@ -82,15 +58,40 @@ export default function TabsLayout() {
                     } as any
                 }
             />
+
             <Tabs.Screen
-                name="help"
+                name="home"
                 options={
                     {
-                        title: "Suporte",
-                        tabBarIcon: ({ color }: { color: string }) => <Feather name="help-circle" color={color} size={24} />,
+                        title: "One Matter",
+                        tabBarIcon: ({ color }: { color: string }) => <Feather name="home" color={color} size={24} />,
                         headerShown: true,
                         header: CustomHeaderRenderer,
-                        pageIconName: "help-circle",
+                        pageIconName: "home",
+                    } as any
+                }
+            />
+            <Tabs.Screen
+                name="explore"
+                options={
+                    {
+                        title: "Buscar Vagas",
+                        tabBarIcon: ({ color }: { color: string }) => <Feather name="briefcase" color={color} size={24} />,
+                        headerShown: true,
+                        header: CustomHeaderRenderer,
+                        pageIconName: "briefcase",
+                    } as any // Esse any é pra parar de apitar alerta no pageIconName, depois tenho que resolver
+                }
+            />
+            <Tabs.Screen
+                name="applications"
+                options={
+                    {
+                        title: "Candidaturas",
+                        tabBarIcon: ({ color }: { color: string }) => <Feather name="archive" color={color} size={24} />,
+                        headerShown: true,
+                        header: CustomHeaderRenderer,
+                        pageIconName: "archive",
                     } as any
                 }
             />

@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
 type AuthContextType = {
-    user: Partial<UserData>;
+    user: Partial<UserData> | null;
     logout: () => void;
     login: (userData: Partial<UserData>) => void;
     isReady: boolean;
@@ -14,7 +14,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const initialUser: Partial<UserData> = { nomeCompleto: "Candidato", email: "" };
-    const [user, setUser] = useState<Partial<UserData>>(initialUser);
+    const [user, setUser] = useState<Partial<UserData> | null>(null);
     const [isReady, setIsReady] = useState(false);
 
     useEffect(() => {
@@ -37,10 +37,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const logout = () => {
         removeTokenAndUser().then(() => {
-            // Atraso de leve pra suavizar a transição de layout
             setTimeout(() => {
-                setUser(initialUser);
-                router.replace("/(auth)"); // Volta para a tela de autenticação
+                setUser(null);
+                router.replace("/(auth)");
             }, 50);
         });
     };

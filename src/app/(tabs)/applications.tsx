@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
-const Tests = () => {
+const Applications = () => {
     return (
         <View>
-            <Text>Tests</Text>
+            <Text>Applications</Text>
         </View>
     );
 };
-export default Tests;
+export default Applications;
 const styles = StyleSheet.create({});
