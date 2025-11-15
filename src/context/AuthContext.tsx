@@ -1,5 +1,7 @@
+// enviar_mobile/src/context/AuthContext.tsx
+
 import { checkTokenAndLoadUser, removeTokenAndUser } from "@/services/authService";
-import UserData from "@/types/login/loginTypes";
+import { UserData } from "@/types/auth/authTypes";
 import { router } from "expo-router";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
@@ -13,10 +15,11 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const initialUser: Partial<UserData> = { nomeCompleto: "Candidato", email: "" };
+    // Ajustado nomeCompleto para nome (campo da API)
+    const initialUser: Partial<UserData> = { nome: "Candidato", email: "" };
     const [user, setUser] = useState<Partial<UserData> | null>(null);
     const [isReady, setIsReady] = useState(false);
-
+    // ... (restante do código)
     useEffect(() => {
         const fetchUserData = async () => {
             try {

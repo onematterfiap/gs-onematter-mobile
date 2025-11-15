@@ -38,7 +38,7 @@ const AcaoPrincipalItem = ({ title, iconName, targetScreen }: { title: string; i
 
 const Home = () => {
     const { user, logout } = useAuth();
-    const userName = user?.nomeCompleto?.split(" ")[0] || "Candidato";
+    const userName = user?.nome?.split(" ")[0] || "Candidato";
 
     const handleLogout = () => {
         logout();

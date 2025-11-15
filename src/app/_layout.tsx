@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar as RNStatusBar } from "react-native";
 import "../../global.css";
-import UserData from "@/types/login/loginTypes";
+import { UserData } from "@/types/auth/authTypes";
 
 // Mantém o splash screen visível até o React assumir
 SplashScreen.preventAutoHideAsync();
