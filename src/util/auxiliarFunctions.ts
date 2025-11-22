@@ -74,3 +74,10 @@ export const maskCPF = (cpf: string) => {
 
     return maskedPart + lastTwo;
 };
+
+export const formatStatusText = (status: string): string => {
+    if (!status) return "";
+    let formatted = status.toLowerCase().replace(/_/g, " ");
+    // Capitaliza apenas a primeira letra da frase
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+};
