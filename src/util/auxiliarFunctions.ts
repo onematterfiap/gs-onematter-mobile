@@ -1,3 +1,5 @@
+import { CandidaturaDetalheDto } from "@/types/auth/authTypes";
+
 // Funções de formatação de texto (máscaras)
 export const formatCPF = (text: string) => {
     const cleaned = text.replace(/\D/g, "");
@@ -80,4 +82,17 @@ export const formatStatusText = (status: string): string => {
     let formatted = status.toLowerCase().replace(/_/g, " ");
     // Capitaliza apenas a primeira letra da frase
     return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+};
+
+//  Função para buscar a próxima candidatura de um usuário
+export const getNextStepStatus = (candidaturas: CandidaturaDetalheDto[] | undefined) => {
+    if (!candidaturas || candidaturas.length === 0) return "Nenhuma";
+
+    const isAwaitingTest = candidaturas.some((c) => c.statusHistorico.some((s) => s.statusDescricao === "AGUARDANDO_TESTE"));
+
+    if (isAwaitingTest) {
+        return `AGUARDANDO TESTE`;
+    }
+
+    return "Em Análise";
 };
