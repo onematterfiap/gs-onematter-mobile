@@ -1,97 +1,131 @@
-// enviar_mobile/src/components/forms/SignUpForm.tsx
-
-import { ControlledInput } from "@/components/ui/ControlledInput";
 import { useAuth } from "@/context/AuthContext";
 import { handleRegister } from "@/services/authService";
-import { CadastroFormData, registerSchema, SignupFormProps } from "@/types/auth/authTypes";
-import { formatCPF, formatDataNascimento, formatTelefone } from "@/util/auxiliarFunctions"; // Importa as funções de formatação
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Text, TouchableOpacity, View } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import { Step1Credentials } from "./Step1Credentials";
+import { Step2PersonalData } from "./Step2PersonalData";
+import { Step3Skills } from "./Step3Skills";
+import { registerSchema, SignUpFormData, SignupFormProps, StepConfigType } from "@/types/signup/signupFormTypes";
 
 const SignupForm = ({ router }: SignupFormProps) => {
     const { login } = useAuth();
-    const [generoSelecionado, setGeneroSelecionado] = useState<CadastroFormData["genero"] | undefined>(undefined);
+    const [currentStep, setCurrentStep] = useState(1);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [generoSelecionado, setGeneroSelecionado] = useState<SignUpFormData["genero"] | undefined>(undefined);
 
     const {
         control,
         handleSubmit,
         setValue,
+        trigger,
         formState: { errors },
-    } = useForm<CadastroFormData>({
+    } = useForm<SignUpFormData>({
         defaultValues: {
             nome: "",
             email: "",
             password: "",
             cpf: "",
             dataNascimento: "",
-            genero: undefined,
             telefone: "",
+            genero: undefined,
+            selectedSkills: [],
         },
         resolver: zodResolver(registerSchema),
     });
 
-    const onRegisterSubmit = async (data: CadastroFormData) => {
-        const user = await handleRegister(data);
+    // Configuração das etapas com tipagem explícita
+    const stepConfig: StepConfigType = {
+        1: { fields: ["nome", "email", "password"], label: "Credenciais" },
+        2: { fields: ["cpf", "dataNascimento", "genero", "telefone"], label: "Dados Pessoais" },
+        3: { fields: [], label: "Habilidades" },
+    };
 
-        if (user) {
-            login(user);
-            router.replace("/(tabs)/home");
+    const handleNextStep = async () => {
+        const fieldsToValidate = stepConfig[currentStep].fields;
+        // O trigger aceita um nome de campo ou array de nomes. A tipagem garante que está correto.
+        const isValid = await trigger(fieldsToValidate);
+        if (isValid) setCurrentStep((prev) => prev + 1);
+    };
+
+    const handlePrevStep = () => {
+        setCurrentStep((prev) => prev - 1);
+    };
+
+    const onRegisterSubmit = async (data: SignUpFormData) => {
+        setIsSubmitting(true);
+        try {
+            const user = await handleRegister(data);
+            if (user) {
+                login(user);
+                setTimeout(() => router.replace("/(tabs)/home"), 100);
+            }
+        } catch (e) {
+            // Erros já tratados no service
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const renderStepContent = () => {
+        switch (currentStep) {
+            case 1:
+                return <Step1Credentials control={control} errors={errors} />;
+            case 2:
+                return <Step2PersonalData control={control} errors={errors} generoSelecionado={generoSelecionado} setGeneroSelecionado={setGeneroSelecionado} setValue={setValue} />;
+            case 3:
+                return <Step3Skills control={control} setValue={setValue} />;
+            default:
+                return null;
         }
     };
 
     return (
         <View className="w-full">
-            {/* Nome completo */}
-            <ControlledInput control={control} name="nome" label="" placeholder="Nome Completo" placeholderTextColor="#71717a" error={errors.nome} />
-            <View className="h-4" />
+            {/* Cabeçalho de Progresso Melhorado */}
+            <View className="mb-8">
+                <View className="flex-row justify-between items-end mb-3">
+                    <View>
+                        <Text className="text-xs font-bold text-onematter-700 uppercase tracking-widest mb-1">Passo {currentStep} de 3</Text>
+                        <Text className="text-xl font-bold text-neutral-800">{stepConfig[currentStep].label}</Text>
+                    </View>
+                    <Text className="text-neutral-400 text-sm font-medium">{Math.round((currentStep / 3) * 100)}%</Text>
+                </View>
 
-            {/* E-mail*/}
-            <ControlledInput control={control} name="email" label="" placeholder="Email" placeholderTextColor="#71717a" keyboardType="email-address" autoCapitalize="none" error={errors.email} />
-            <View className="h-4" />
-
-            {/* Senha */}
-            <ControlledInput control={control} name="password" label="" placeholder="Senha" placeholderTextColor="#71717a" secureTextEntry error={errors.password} />
-            <View className="h-4" />
-
-            {/* CPF */}
-            <ControlledInput control={control} name="cpf" label="" placeholder="CPF (apenas números)" placeholderTextColor="#71717a" keyboardType="numeric" maxLength={14} formatValue={formatCPF} error={errors.cpf} />
-            <View className="h-4" />
-
-            {/* Data de Nascimento */}
-            <ControlledInput control={control} name="dataNascimento" label="" placeholder="Data de Nascimento (DD/MM/AAAA)" placeholderTextColor="#71717a" keyboardType="numeric" maxLength={10} formatValue={formatDataNascimento} error={errors.dataNascimento} />
-            <View className="h-4" />
-
-            {/* Telefone */}
-            <ControlledInput control={control} name="telefone" label="" placeholder="Telefone (opcional)" placeholderTextColor="#71717a" keyboardType="phone-pad" maxLength={15} formatValue={formatTelefone} error={errors.telefone} />
-            <View className="h-4" />
-
-            {/* Gênero (Picker para enum) */}
-            <View className={`bg-[#FAF9F6] border ${errors.genero ? "border-onematter-700" : "border-neutral-300"} rounded-lg p-0`}>
-                <Picker
-                    selectedValue={generoSelecionado}
-                    onValueChange={(itemValue) => {
-                        setGeneroSelecionado(itemValue as CadastroFormData["genero"]);
-                        setValue("genero", itemValue as CadastroFormData["genero"], { shouldValidate: true });
-                    }}
-                    style={{ color: generoSelecionado ? "#27272a" : "#71717a" }}
-                >
-                    <Picker.Item label="Selecione o Gênero" value={undefined} enabled={false} />
-                    <Picker.Item label="Masculino" value="MASCULINO" />
-                    <Picker.Item label="Feminino" value="FEMININO" />
-                    <Picker.Item label="Outro" value="OUTRO" />
-                </Picker>
+                {/* Barra de Progresso Contínua */}
+                <View className="h-1.5 w-full bg-neutral-200 rounded-full overflow-hidden flex-row">
+                    {[1, 2, 3].map((step) => (
+                        <View key={step} className={`h-full flex-1 ${step <= currentStep ? "bg-onematter-700" : "bg-transparent"} ${step < 3 ? "border-r border-white/20" : ""}`} />
+                    ))}
+                </View>
             </View>
-            {errors.genero && <Text className="mt-1 text-sm text-onematter-700">{errors.genero.message}</Text>}
 
-            <View className="h-4" />
+            {/* Conteúdo */}
+            <View className="min-h-[280px]">{renderStepContent()}</View>
 
-            {/* Botão de Cadastro */}
-            <TouchableOpacity onPress={handleSubmit(onRegisterSubmit)} activeOpacity={0.7} className="items-center py-4 mt-8 rounded-xl bg-onematter-700 shadow-lg">
-                <Text className="text-lg font-bold text-white">CRIAR CONTA</Text>
-            </TouchableOpacity>
+            <View className="h-8" />
+
+            {/* Botões Reduzidos (py-3.5 text-base) e Estilizados */}
+            <View className="flex-row justify-between gap-4">
+                {currentStep > 1 ? (
+                    <TouchableOpacity onPress={handlePrevStep} disabled={isSubmitting} className="flex-1 items-center justify-center py-3.5 rounded-xl border border-neutral-300 bg-white active:bg-neutral-50">
+                        <Text className="text-base font-semibold text-neutral-600">Voltar</Text>
+                    </TouchableOpacity>
+                ) : (
+                    <View className="flex-1" />
+                )}
+
+                {currentStep < 3 ? (
+                    <TouchableOpacity onPress={handleNextStep} className="flex-1 items-center justify-center py-3.5 rounded-xl bg-onematter-700 shadow-sm active:bg-onematter-800">
+                        <Text className="text-base font-bold text-white">Próximo</Text>
+                    </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity onPress={handleSubmit(onRegisterSubmit)} disabled={isSubmitting} className={`flex-1 items-center justify-center py-3.5 rounded-xl bg-onematter-700 shadow-sm active:bg-onematter-800 ${isSubmitting ? "opacity-70" : ""}`}>
+                        {isSubmitting ? <ActivityIndicator color="#fff" size="small" /> : <Text className="text-base font-bold text-white">Criar Conta</Text>}
+                    </TouchableOpacity>
+                )}
+            </View>
         </View>
     );
 };
