@@ -1,5 +1,3 @@
-import { CandidaturaDetalheDto } from "@/types/auth/authTypes";
-
 // Funções de formatação de texto (máscaras)
 export const formatCPF = (text: string) => {
     const cleaned = text.replace(/\D/g, "");
@@ -20,7 +18,6 @@ export const formatTelefone = (text: string) => {
     const cleaned = text.replace(/\D/g, "");
     if (cleaned.length < 3) return `(${cleaned}`;
 
-    // Identifica se é celular (11 dígitos) ou fixo (10 dígitos)
     const isCelular = cleaned.length > 10;
 
     if (isCelular) {
@@ -62,15 +59,12 @@ export const calculateAge = (birthDate: string) => {
 // Função para esconder o CPF e exibir apenas o final
 export const maskCPF = (cpf: string) => {
     if (!cpf) return "";
-    // Remove tudo que não for dígito (para lidar com inputs formatados ou não)
     const cleaned = cpf.replace(/\D/g, "");
 
     if (cleaned.length < 11) {
-        // Se não for um CPF completo, retorna o limpo
         return cleaned;
     }
 
-    // Mascara os 9 primeiros dígitos e mantém a formatação
     const maskedPart = "***.***.***-";
     const lastTwo = cleaned.substring(9, 11);
 
@@ -80,19 +74,22 @@ export const maskCPF = (cpf: string) => {
 export const formatStatusText = (status: string): string => {
     if (!status) return "";
     let formatted = status.toLowerCase().replace(/_/g, " ");
-    // Capitaliza apenas a primeira letra da frase
     return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 };
 
-//  Função para buscar a próxima candidatura de um usuário
-export const getNextStepStatus = (candidaturas: CandidaturaDetalheDto[] | undefined) => {
-    if (!candidaturas || candidaturas.length === 0) return "Nenhuma";
+// Função formatISODateToBR (agora exportada corretamente)
+export function formatISODateToBR(isoDateString: string): string {
+    if (!isoDateString) return "";
+    try {
+        const date = new Date(isoDateString);
 
-    const isAwaitingTest = candidaturas.some((c) => c.statusHistorico.some((s) => s.statusDescricao === "AGUARDANDO_TESTE"));
+        // Formata para DD/MM/AAAA
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
 
-    if (isAwaitingTest) {
-        return `AGUARDANDO TESTE`;
+        return `${day}/${month}/${year}`;
+    } catch (e) {
+        return isoDateString;
     }
-
-    return "Em Análise";
-};
+}

@@ -1,13 +1,12 @@
-import { CandidaturaDetalheDto, FormacaoDetalheDto, SkillDetalheDto } from "./authTypes";
+import { ApplicationCardProps } from "../job/jobTypes";
+import { SkillDto } from "../skill/skillTypes";
 
-// Resposta do POST /auth/login
 export interface TokenDto {
     token: string;
     refreshToken: string;
     tipo: string;
 }
 
-// Resposta do GET /usuarios/me e POST /auth/register
 export interface UsuarioPerfilCompletoDto {
     id: number;
     nome: string;
@@ -18,17 +17,35 @@ export interface UsuarioPerfilCompletoDto {
     genero: "MASCULINO" | "FEMININO" | "OUTRO";
     telefone: string;
     dataCriacao: string;
-
-    skills: SkillDetalheDto[];
-    formacoes: FormacaoDetalheDto[];
-    candidaturas: CandidaturaDetalheDto[];
+    skills: SkillDto[];
+    candidaturas: ApplicationCardProps[];
 }
 
-// DTO de erro padrão da API
+export interface UsuarioUpdatePayload {
+    nome: string;
+    email?: string;
+    senha?: string;
+    cpf: string;
+    dataNascimento: string;
+    genero: "MASCULINO" | "FEMININO" | "OUTRO";
+    telefone: string | null;
+    skills: number[];
+}
+
 export interface ErroPadraoDto {
     timestamp: string;
     status: number;
     error: string;
     message: string;
     path: string;
+}
+
+export interface EditProfileFormData {
+    nome: string;
+    genero: "MASCULINO" | "FEMININO" | "OUTRO";
+    telefone: string;
+}
+
+export interface EditProfileFormProps {
+    onClose: () => void;
 }

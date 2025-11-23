@@ -1,7 +1,6 @@
 import { QuickActionItem } from "@/components/home/QuickActionItem";
 import { StatCard } from "@/components/home/StatCard";
 import { useAuth } from "@/context/AuthContext";
-import { getNextStepStatus } from "@/util/auxiliarFunctions";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -14,7 +13,6 @@ const Home = () => {
 
     const userName = user.nome?.split(" ")[0] || "Candidato";
     const activeCandidatures = user.candidaturas ? user.candidaturas.length : 0;
-    const nextStepStatus = getNextStepStatus(user.candidaturas);
 
     return (
         <SafeAreaView className="flex-1 bg-neutral-100">
@@ -28,13 +26,14 @@ const Home = () => {
 
                 <View className="mb-8">
                     <StatCard title="Minhas Candidaturas Ativas" value={activeCandidatures.toString()} iconName="send" />
-                    <StatCard title="Próxima Etapa" value={nextStepStatus} iconName="calendar" />
                 </View>
 
                 <Text className="text-xl font-bold text-neutral-800 mb-4">Ações Rápidas</Text>
                 <View className="flex-row justify-between flex-wrap mb-8">
                     <QuickActionItem title="Buscar Novas Vagas Abertas" iconName="search" targetScreen="/explore" />
-                    <QuickActionItem title="Acompanhar Candidaturas" iconName="archive" targetScreen="/applications" />
+                    <QuickActionItem title="Acompanhar Candidaturas" iconName="briefcase" targetScreen="/explore" />
+                    <QuickActionItem title="Ver meu perfil" iconName="user" targetScreen="/profile" />
+                    <QuickActionItem title="Reportar Erro" iconName="alert-triangle" targetScreen="/help/report" />
                 </View>
             </ScrollView>
         </SafeAreaView>

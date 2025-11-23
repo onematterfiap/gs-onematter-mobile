@@ -1,4 +1,4 @@
-import { TokenDto, UsuarioPerfilCompletoDto } from "@/types/auth/dtos";
+import { TokenDto, UsuarioPerfilCompletoDto, UsuarioUpdatePayload } from "@/types/auth/dtos";
 import { apiClient } from "./apiClient";
 import { SignUpFormData } from "@/types/signup/signupFormTypes";
 import { LoginFormData } from "@/types/login/loginTypes";
@@ -21,11 +21,11 @@ export async function registerUserApi(data: SignUpFormData): Promise<UsuarioPerf
         nome: data.nome,
         email: data.email,
         senha: data.password,
-        cpf: data.cpf.replace(/\D/g, ""), // Remove pontuação
+        cpf: data.cpf.replace(/\D/g, ""),
         dataNascimento: birthDateISO,
         genero: data.genero,
         telefone: data.telefone?.replace(/\D/g, "") || null,
-        skills: data.selectedSkills || [], // <--- Envia a lista de IDs aqui
+        skills: data.selectedSkills || [],
     };
 
     const response = await apiClient.post<UsuarioPerfilCompletoDto>("/auth/register", finalPayload);
@@ -34,5 +34,18 @@ export async function registerUserApi(data: SignUpFormData): Promise<UsuarioPerf
 
 export async function fetchUserDetailsApi(): Promise<UsuarioPerfilCompletoDto> {
     const response = await apiClient.get<UsuarioPerfilCompletoDto>("/usuarios/me");
+    return response.data;
+}
+
+// Função para enviar os dados atualizados para PUT /usuarios/me
+export async function updateUserApi(payload: UsuarioUpdatePayload): Promise<UsuarioPerfilCompletoDto> {
+    const finalPayload = {
+        nome: payload.nome,
+        genero: payload.genero,
+        telefone: payload.telefone ? payload.telefone.replace(/\D/g, "") : null,
+        skills: payload.skills,
+    };
+
+    const response = await apiClient.put<UsuarioPerfilCompletoDto>("/usuarios/me", finalPayload);
     return response.data;
 }
