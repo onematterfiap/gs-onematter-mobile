@@ -13,6 +13,26 @@ export interface ApplicationCardProps {
     onCancel: (id: number) => void;
 }
 
+// Novo DTO de Detalhe de Skill da Vaga (VagaSkillDetalheDto)
+export interface VagaSkillDetalheDto {
+    id: number;
+    nome: string;
+    categoria: string;
+}
+
+// Novo DTO de Detalhe da Vaga (VagaDetalheDto - do endpoint GET /vagas/{id})
+export interface VagaDetalheDto {
+    id: number;
+    descricao: string;
+    idEmpresa: number;
+    nomeEmpresa: string;
+    idRecrutador: number;
+    nomeRecrutador: string;
+    dataCriacao: string;
+    deleted: number;
+    skillsRequeridas: VagaSkillDetalheDto[]; // Campo extra de detalhe
+}
+
 // Base DTOs
 export interface jobResponseDto {
     id: number;
@@ -51,5 +71,5 @@ export interface PageResponse<T> {
 
 export interface JobCardProps {
     vaga: VagaFrontend;
-    onCandidatar: (id: number) => void;
+    onPress: (id: number) => void; // Alterado para onPress para navegação
 }

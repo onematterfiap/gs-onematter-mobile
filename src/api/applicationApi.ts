@@ -1,4 +1,4 @@
-import { ApplicationResponseDto, jobResponseDto, PageResponse } from "@/types/job/jobTypes";
+import { ApplicationResponseDto, jobResponseDto, PageResponse, VagaDetalheDto } from "@/types/job/jobTypes";
 import { apiClient } from "./apiClient";
 
 /**
@@ -13,8 +13,8 @@ export async function fetchVagasApi(page: number = 0, size: number = 10): Promis
 /**
  * Endpoint: GET /vagas/{id}
  */
-export async function fetchVagaByIdApi(id: number): Promise<jobResponseDto> {
-    const response = await apiClient.get<jobResponseDto>(`/vagas/${id}`);
+export async function fetchVagaByIdApi(id: number): Promise<VagaDetalheDto> {
+    const response = await apiClient.get<VagaDetalheDto>(`/vagas/${id}`);
     return response.data;
 }
 

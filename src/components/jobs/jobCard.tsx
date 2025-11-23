@@ -3,9 +3,11 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { JobCardProps } from "@/types/job/jobTypes";
 
-const JobCard = React.memo(({ vaga, onCandidatar }: JobCardProps) => {
+// Componente JobCard agora recebe onPress para navegação
+const JobCard = React.memo(({ vaga, onPress }: JobCardProps) => {
     return (
-        <View className="bg-white rounded-xl p-5 mb-4 shadow-xl border border-gray-100">
+        // O card inteiro agora é um botão de navegação
+        <TouchableOpacity onPress={() => onPress(vaga.id)} className="bg-white rounded-xl p-5 mb-4 shadow-xl border border-gray-100 active:bg-neutral-50" activeOpacity={0.8}>
             <Text className="text-xl font-extrabold text-neutral-800 mb-1 leading-tight" numberOfLines={2}>
                 {vaga.descricao}
             </Text>
@@ -24,11 +26,12 @@ const JobCard = React.memo(({ vaga, onCandidatar }: JobCardProps) => {
 
             <View className="h-[1px] bg-neutral-100 mb-4" />
 
-            <TouchableOpacity onPress={() => onCandidatar(vaga.id)} className="flex-row items-center justify-center px-4 py-2 bg-onematter-700 rounded-xl shadow-md active:bg-onematter-800 transition-colors duration-150">
-                <Feather name="send" size={16} color="#fff" />
-                <Text className="text-base font-bold text-white ml-2">Candidatar-se Agora</Text>
-            </TouchableOpacity>
-        </View>
+            {/* Nova Ação Visual de Navegação */}
+            <View className="flex-row items-center justify-end">
+                <Text className="text-sm font-bold text-onematter-700 mr-2">Ver Detalhes</Text>
+                <Feather name="arrow-right" size={16} color="#ea580c" />
+            </View>
+        </TouchableOpacity>
     );
 });
 

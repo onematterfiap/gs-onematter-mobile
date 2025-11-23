@@ -1,5 +1,5 @@
-import { fetchVagasApi, fetchMinhasCandidaturasApi, cancelarCandidaturaApi } from "@/api/applicationApi";
-import { Application, ApplicationResponseDto, jobResponseDto, PageResponse } from "@/types/job/jobTypes";
+import { fetchVagasApi, fetchMinhasCandidaturasApi, cancelarCandidaturaApi, fetchVagaByIdApi } from "@/api/applicationApi";
+import { Application, ApplicationResponseDto, jobResponseDto, PageResponse, VagaDetalheDto, VagaSkillDetalheDto } from "@/types/job/jobTypes";
 
 /**
  * Modelo de dados formatado para a UI de Vagas.
@@ -12,7 +12,7 @@ export interface VagaFrontend {
     dataCriacaoFormatada: string;
 }
 
-const mapVagaToFrontend = (vaga: jobResponseDto): VagaFrontend => {
+const mapVagaToFrontend = (vaga: jobResponseDto | VagaDetalheDto): VagaFrontend => {
     return {
         id: vaga.id,
         descricao: vaga.descricao,
@@ -77,4 +77,29 @@ export async function fetchMinhasCandidaturasService(page: number = 0, size: num
  */
 export async function cancelarCandidaturaService(idCandidatura: number): Promise<void> {
     await cancelarCandidaturaApi(idCandidatura);
+}
+
+// Novo modelo de dados para a tela de detalhes
+export interface VagaDetalhesFrontend extends VagaFrontend {
+    idRecrutador: number;
+    skills: VagaSkillDetalheDto[];
+}
+
+const mapVagaDetalheToFrontend = (vaga: VagaDetalheDto): VagaDetalhesFrontend => {
+    // Reusa o mapeamento base da listagem
+    const base = mapVagaToFrontend(vaga);
+
+    return {
+        ...base,
+        idRecrutador: vaga.idRecrutador,
+        skills: vaga.skillsRequeridas, // Mapeia o campo de skills
+    };
+};
+
+/**
+ * Busca detalhes de uma vaga por ID e aplica a formatação de front-end.
+ */
+export async function fetchVagaDetalhesService(id: number): Promise<VagaDetalhesFrontend> {
+    const data = await fetchVagaByIdApi(id);
+    return mapVagaDetalheToFrontend(data);
 }
