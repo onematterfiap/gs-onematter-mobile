@@ -6,9 +6,10 @@ import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View, Alert } fr
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
 import axios from "axios";
+import { useAuth } from "@/context/AuthContext";
 
 const JobDetails = () => {
-    // Obtém o ID da vaga da URL (expo-router dynamic route)
+    // Pega o ID da vaga da URl
     const { id } = useLocalSearchParams();
     // Converte para número, se for uma string válida
     const idVaga = typeof id === "string" ? parseInt(id, 10) : undefined;
@@ -17,6 +18,8 @@ const JobDetails = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const { updateUser } = useAuth();
 
     // Função de carregamento dos detalhes da vaga
     const loadVaga = useCallback(async () => {
@@ -43,7 +46,7 @@ const JobDetails = () => {
         loadVaga();
     }, [loadVaga]);
 
-    // Lógica de Candidatura (movida da tela explore.tsx)
+    // Lógica de Candidatura
     const handleCandidatar = useCallback(async () => {
         if (!idVaga) return;
 
@@ -51,10 +54,13 @@ const JobDetails = () => {
         try {
             await candidatarAVagaApi(idVaga);
             Alert.alert("Sucesso", "Candidatura realizada com sucesso! Acompanhe o status na aba 'Candidaturas'.");
+
+            // Atualiza o contexto do usuário para sincronizar o contador da tela home
+            await updateUser();
         } catch (e: any) {
             let errorMessage = "Ocorreu um erro ao candidatar-se.";
             if (axios.isAxiosError(e) && e.response?.status === 409) {
-                // Erro de Conflito de Dados (já cadastrado)
+                // Erro de Conflito de Dados
                 errorMessage = "Você já está candidatado a esta vaga.";
             } else if (axios.isAxiosError(e) && e.response?.status === 401) {
                 // Erro de Autorização
@@ -64,7 +70,7 @@ const JobDetails = () => {
         } finally {
             setIsSubmitting(false);
         }
-    }, [idVaga]);
+    }, [idVaga, updateUser]);
 
     if (isLoading) {
         return (
@@ -85,7 +91,6 @@ const JobDetails = () => {
         );
     }
 
-    // Verifica se há skills para renderizar
     const hasSkills = vaga.skills && vaga.skills.length > 0;
 
     return (

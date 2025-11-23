@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View, Alert } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import axios from "axios";
-import { cancelarCandidaturaService } from "@/services/jobService";
+import { cancelarCandidaturaService } from "@/context/services/jobService";
 import { ApplicationCardProps } from "@/types/job/jobTypes";
 import { formatStatusText } from "@/util/auxiliarFunctions";
 

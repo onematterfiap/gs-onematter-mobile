@@ -1,4 +1,4 @@
-import { handleLogin } from "@/services/authService";
+import { handleLogin } from "@/context/services/authService";
 import { LoginFormProps } from "@/types/login/loginFormTypes";
 import { LoginFormData, loginSchema } from "@/types/login/loginTypes";
 import { zodResolver } from "@hookform/resolvers/zod";

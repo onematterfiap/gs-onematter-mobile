@@ -1,11 +1,12 @@
-import { fetchMinhasCandidaturasService } from "@/services/jobService";
 import { Feather } from "@expo/vector-icons";
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import ApplicationCard from "@/components/applications/applicationCard";
 import { Application } from "@/types/job/jobTypes";
+import { useFocusEffect } from "@react-navigation/native";
+import { fetchMinhasCandidaturasService } from "@/services/jobService";
 
 const Applications = () => {
     const [candidaturas, setCandidaturas] = useState<Application[]>([]);
@@ -32,9 +33,14 @@ const Applications = () => {
         }
     }, []);
 
-    useEffect(() => {
-        loadCandidaturas();
-    }, [loadCandidaturas]);
+    // useFocusEffect pra recarregar as candidaturas quando a tela é focada
+    useFocusEffect(
+        useCallback(() => {
+            loadCandidaturas();
+            // Retorno opcional, sem limpeza necessária neste caso
+            return () => {};
+        }, [loadCandidaturas])
+    );
 
     // Função para recarregar a lista após um cancelamento bem-sucedido
     const handleCancelSuccess = () => {

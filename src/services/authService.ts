@@ -35,6 +35,7 @@ const mapApiUserToFrontend = (apiUser: UsuarioPerfilCompletoDto): Partial<UserDa
         telefone: apiUser.telefone,
         dataCriacao: apiUser.dataCriacao,
         skills: apiUser.skills,
+        candidaturas: apiUser.candidaturas,
     };
 };
 
@@ -97,6 +98,19 @@ export async function checkTokenAndLoadUser(): Promise<Partial<UserData> | null>
         return mapApiUserToFrontend(apiUser);
     } catch (e) {
         await removeTokenAndUser();
+        return null;
+    }
+}
+
+// Função para recarregar dados do usuário
+export async function refreshUserDetails(): Promise<Partial<UserData> | null> {
+    try {
+        const apiUser = await fetchUserDetailsApi();
+        const userDetails = mapApiUserToFrontend(apiUser);
+        await AsyncStorage.setItem(CURRENT_USER_KEY, JSON.stringify(userDetails));
+        return userDetails;
+    } catch (e) {
+        console.error("Erro ao recarregar detalhes do usuário:", e);
         return null;
     }
 }

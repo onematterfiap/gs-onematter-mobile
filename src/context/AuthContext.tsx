@@ -1,4 +1,4 @@
-import { checkTokenAndLoadUser, removeTokenAndUser } from "@/services/authService";
+import { checkTokenAndLoadUser, removeTokenAndUser, refreshUserDetails } from "@/services/authService";
 import { UserData } from "@/types/auth/authTypes";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
@@ -7,6 +7,7 @@ type AuthContextType = {
     logout: () => void;
     login: (userData: Partial<UserData>) => void;
     isReady: boolean;
+    updateUser: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -39,7 +40,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         });
     };
 
-    return <AuthContext.Provider value={{ user, logout, login, isReady }}>{children}</AuthContext.Provider>;
+    // Implementação da função de atualização
+    const updateUser = async () => {
+        const updatedUser = await refreshUserDetails();
+        if (updatedUser) {
+            setUser(updatedUser);
+        }
+    };
+
+    // Inclui updateUser no valor do contexto
+    return <AuthContext.Provider value={{ user, logout, login, isReady, updateUser }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
